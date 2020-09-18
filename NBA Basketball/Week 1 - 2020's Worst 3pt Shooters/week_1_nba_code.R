@@ -69,3 +69,6 @@ overconfident_shooters <-
 overconfident_shooters %>%
   gtsave("week_1_3pt_loserboard.png")
 
+overconfident_shooters %>%
+  gtsave("week_1_3pt_loserboard.html")
+
