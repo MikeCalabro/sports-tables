@@ -86,8 +86,6 @@ table_data %>%
     align = "left"
     ) %>%
   tab_options(
-    heading.subtitle.font.weight = "bolder",
-    #table.font.names = c("mono"),
     table.font.size = 15,
     data_row.padding = 4
   )
