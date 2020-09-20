@@ -2,8 +2,12 @@
 
 library(tidyverse)
 library(ballr)
-library(reactable)
 library(gt)
+library(extrafont) 
+
+font_import()
+fonttable()
+loadfonts()
 
 nba_data <- NBAPerGameStatistics(season = 2020)
 
