@@ -13,3 +13,5 @@ For when you want to dig into the numbers. Experimenting with some varied styles
 ### And A Sadder NBA Example
 
 ![](https://raw.githubusercontent.com/MikeCalabro/sports-tables/master/NBA%20Basketball/Week%201%20-%202020's%20Worst%203pt%20Shooters/overconfident_three_pt_shooters.png)
+
+#### CHECK OUT THE REPO FOR MORE SPORTS TABLES!
