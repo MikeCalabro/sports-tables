@@ -1,6 +1,6 @@
 # Sports Tables
 
-For when you want to dig into the numbers.
+For when you want to dig into the numbers. Experimenting with some varied styles
 
 ### A Simple NBA Example
 
