@@ -19,7 +19,11 @@ plot_data <- nba_data %>%
   distinct() %>%
   mutate(per_game_3pa = round(team_3pa / g, 1)) %>%
   select(tm, season, per_game_3pa) %>%
-  filter(!tm == "TOT")
+  filter(!tm == "TOT") %>%
+  filter(!tm == "NOP") %>%
+  filter(!tm == "NOH") %>%
+  filter(!tm == "CHO") %>%
+  filter(!tm == "CHA")
 
 table_data <- plot_data %>%
   spread(season, per_game_3pa) %>%
@@ -27,16 +31,22 @@ table_data <- plot_data %>%
   filter(!is.na(`2019`)) %>%
   mutate(growth = (`2020`/`2013` - 1)) %>%
   arrange(desc(growth)) %>%
-  filter(!tm == "TOT") %>%
   select(tm, `2013`, `2020`, growth) %>%
   mutate(PLOT = NA)
 
-test_plot <- plot_data %>%
-  filter(tm == "CHI") %>%
-  ggplot() +
-  geom_line(aes(x = season, y = per_game_3pa), color = "red", size = 14) +
-  theme_void() 
+plot_maker <- function(data){
+  data %>%
+    ggplot() +
+    geom_line(aes(x = season, y = per_game_3pa), color = "red", size = 14) +
+    theme_void() +
+    theme(legend.position = "none")
+}
 
+plots <- plot_data %>%
+  nest(threes = c(season, per_game_3pa)) %>%
+  mutate(plot = map(threes, plot_maker)) %>%
+  left_join(table_data %>% select(tm, growth)) %>%
+  arrange(desc(growth))
 
 
 table_data %>%
@@ -48,7 +58,7 @@ table_data %>%
   ) %>%
   tab_header(
     title = md("**RISE OF THE 3-POINT SHOT**"),
-    subtitle = md("The growth of 3-point shot attempts for NBA team between 2013 and 2020")
+    subtitle = md("3-Point Shot Attempt Growth for every NBA team between 2013 and 2020... somebody tell the Knicks, please")
   ) %>%
   tab_style(
     style = cell_borders(
@@ -117,8 +127,19 @@ table_data %>%
   ) %>%
   cols_label(
     tm = "TEAM",
-    growth = "GROWTH"
+    growth = "GROWTH",
+    PLOT = "GROWTH PLOT"
+  ) %>%
+  text_transform(
+    locations = cells_body(
+      columns = vars("PLOT")
+    ),
+    fn = function(x){
+      map(plots$plot, ggplot_image, height = px(15), aspect_ratio = 4)
+    }
   )
 
+
+  
 
 
