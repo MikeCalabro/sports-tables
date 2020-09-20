@@ -32,7 +32,8 @@ table_data <- plot_data %>%
   mutate(growth = (`2020`/`2013` - 1)) %>%
   arrange(desc(growth)) %>%
   select(tm, `2013`, `2020`, growth) %>%
-  mutate(PLOT = NA)
+  mutate(PLOT = NA) %>%
+  filter(growth > .8635 | growth < .60)
 
 plot_maker <- function(data){
   data %>%
@@ -46,19 +47,20 @@ plots <- plot_data %>%
   nest(threes = c(season, per_game_3pa)) %>%
   mutate(plot = map(threes, plot_maker)) %>%
   left_join(table_data %>% select(tm, growth)) %>%
-  arrange(desc(growth))
+  arrange(desc(growth)) %>%
+  filter(growth > .8635 | growth < .60)
 
 
 table_data %>%
   gt(groupname_col = "none") %>%
   cols_width(
-    vars("tm")   ~ px(50),
+    vars("tm")   ~ px(70),
     vars("2020") ~ px(80),
     everything() ~ px(90)
   ) %>%
   tab_header(
     title = md("**RISE OF THE 3-POINT SHOT**"),
-    subtitle = md("3-Point Shot Attempt Growth for every NBA team between 2013 and 2020... somebody tell the Knicks, please")
+    subtitle = md("3-Point Shot Attempt growth for every NBA team between 2013 and 2020... Somebody tell the Knicks, please!")
   ) %>%
   tab_style(
     style = cell_borders(
@@ -126,9 +128,38 @@ table_data %>%
     )
   ) %>%
   cols_label(
-    tm = "TEAM",
-    growth = "GROWTH",
-    PLOT = "GROWTH PLOT"
+    tm = " ",
+    growth = "PERCENT",
+    PLOT = "PLOT"
+  ) %>%
+  tab_spanner(
+    label = "3-PT ATTEMPTS",
+    columns = vars("2013", "2020")
+  ) %>%
+  tab_spanner(
+    label = "GROWTH",
+    columns = vars("growth", "PLOT")
+  ) %>%
+  tab_row_group(
+    group = "BOT 8",
+    rows = (9:16)
+  ) %>%
+  tab_row_group(
+    group = "TOP 8",
+    rows = (1:8)
+  ) %>%
+  tab_style(
+    style = cell_text(
+      weight = "bold"
+    ),
+    locations = cells_row_groups()
+  ) %>%
+  tab_options(
+    row_group.padding = 1
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = vars("2013", "2020")
   ) %>%
   text_transform(
     locations = cells_body(
@@ -138,8 +169,4 @@ table_data %>%
       map(plots$plot, ggplot_image, height = px(15), aspect_ratio = 4)
     }
   )
-
-
-  
-
 
